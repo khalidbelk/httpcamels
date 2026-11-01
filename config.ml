@@ -2,8 +2,9 @@
 open Mirage
 
 let main =
-    main "Unikernel.Make" (stackv4v6 @-> job)
-      ~packages:[ package "h1"; package "paf" ~sublibs:[ "mirage" ]]
+  main "Unikernel.Make" (stackv4v6 @-> job)
+    ~packages:
+      [ package "h1"; package "paf" ~sublibs:[ "mirage" ]; package "tyxml" ]
 
 let stack = generic_stackv4v6 default_network
 let () = register "httpcodes" [ main $ stack ]

@@ -1,5 +1,6 @@
-version = 0.27.0
+version = 0.28.1
 profile = conventional
+break-cases = all
 break-infix = fit-or-vertical
 parse-docstrings = true
 module-item-spacing = compact

@@ -1,11 +1,11 @@
-
 let getrand () = Random.int 1000
 
 let route _method path : App.response =
-  match _method, path with
-  | `GET, "/" ->  { status = `OK; body = Int.to_string (getrand ()) }
+  match (_method, path) with
+  | `GET, "/" ->
+      { status = `OK; body = Index.render_index ~numbah:(getrand ()) }
   | `GET, "/khello" -> { status = `OK; body = "Khello !" }
-  | _ ->  { status = `Not_found; body = "not found" }
+  | _ -> { status = `Not_found; body = "not found" }
 
 let validate path : (string, App.response) result =
   if String.length path > 256 then
@@ -15,7 +15,7 @@ let validate path : (string, App.response) result =
   else Ok path
 
 (** Takes the request descripton and return a response accordingly *)
-let handle (request: H1.Request.t) : App.response =
+let handle (request : H1.Request.t) : App.response =
   let m = request.meth and p = request.target in
   match validate p with
   | Error response -> response

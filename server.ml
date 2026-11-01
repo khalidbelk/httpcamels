@@ -1,44 +1,44 @@
-module Make (Stack: Tcpip.Stack.V4V6) (Handler: App.S) = struct
+module Make (Stack : Tcpip.Stack.V4V6) (Handler : App.S) = struct
   open Lwt.Syntax
   module Paf = Paf_mirage.Make (Stack.TCP)
 
   let src = Logs.Src.create "httpcodes" ~doc:"httpcodes unikernel"
+
   module Logger = (val Logs.src_log src : Logs.LOG)
 
   let error_handler _dst ?request:_ error start_response =
     (match error with
-      | `Exn e -> Logger.warn (fun f -> f "connection error: %s" (Printexc.to_string e))
-      | _ -> ()
-    );
+    | `Exn e ->
+        Logger.warn (fun f -> f "connection error: %s" (Printexc.to_string e))
+    | _ -> ());
     (* In case a client already disconnected but reaches this, we ignore it
         instead of crashing (e.g "cannot write to closed writer")*)
     try
-        let out = start_response H1.Headers.empty in
-        H1.Body.Writer.write_string out "error";
-        H1.Body.Writer.close out
-    with _ -> ()
+      let out = start_response H1.Headers.empty in
+      H1.Body.Writer.write_string out "error";
+      H1.Body.Writer.close out
+    with
+    | _ -> ()
 
   let request_handler _flow (ip, port) reqd =
-    let request = (H1.Reqd.request reqd) in
+    let request = H1.Reqd.request reqd in
     let { App.status; body } = Handler.handle request in
     let target = request.target and body_len = String.length body in
-    let headers = H1.Headers.of_list [ "content-length", string_of_int body_len ]
+    let headers =
+      H1.Headers.of_list [ ("content-length", string_of_int body_len) ]
     in
-      Logger.info (fun f ->
+    Logger.info (fun f ->
         f "Request from %a:%d | %s %s | Response: %d (%d bytes)"
-        Stack.IP.pp_ipaddr ip port
-        (H1.Method.to_string request.meth) target
-        (H1.Status.to_code status) body_len
-      );
-      H1.Reqd.respond_with_string reqd (H1.Response.create ~headers status) body
+          Stack.IP.pp_ipaddr ip port
+          (H1.Method.to_string request.meth)
+          target (H1.Status.to_code status) body_len);
+    H1.Reqd.respond_with_string reqd (H1.Response.create ~headers status) body
 
   let start stack =
     let port = 8080 in
     let* socket = Paf.init ~port (Stack.tcp stack) in
     let service = Paf.http_service ~error_handler request_handler in
-    let `Initialized th = Paf.serve service socket in
+    let (`Initialized th) = Paf.serve service socket in
     Logger.info (fun f -> f "Listening on port %d." port);
     th
 end
-
-
