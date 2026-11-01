@@ -1,12 +1,12 @@
-# mirage-hello
+# httpcodes
 
-Minimalist hello-world skeleton for MirageOS.
+An HTTP codes API as an OCaml unikernel.
 
 ```shell
 mirage configure -t unix
 make depends
 dune build
-./dist/hello
+./dist/httpcodes
 ```
 
 Use `-t hvt` instead of `-t unix` on Linux for Solo5 unikernels
