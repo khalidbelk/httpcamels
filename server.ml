@@ -18,13 +18,19 @@ module Make (Stack: Tcpip.Stack.V4V6) (Handler: App.S) = struct
         H1.Body.Writer.close out
     with _ -> ()
 
-
-  (* TODO: log target *)
   let request_handler _flow (ip, port) reqd =
-    Logger.info (fun f -> f "Received request from %a:%d" Stack.IP.pp_ipaddr ip port);
-    let { App.status; body } = Handler.handle (H1.Reqd.request reqd) in
-    let headers = H1.Headers.of_list [ "content-length", string_of_int (String.length body) ] in
-    H1.Reqd.respond_with_string reqd (H1.Response.create ~headers status) body
+    let request = (H1.Reqd.request reqd) in
+    let { App.status; body } = Handler.handle request in
+    let target = request.target and body_len = String.length body in
+    let headers = H1.Headers.of_list [ "content-length", string_of_int body_len ]
+    in
+      Logger.info (fun f ->
+        f "Request from %a:%d | %s %s | Response: %d (%d bytes)"
+        Stack.IP.pp_ipaddr ip port
+        (H1.Method.to_string request.meth) target
+        (H1.Status.to_code status) body_len
+      );
+      H1.Reqd.respond_with_string reqd (H1.Response.create ~headers status) body
 
   let start stack =
     let port = 8080 in
