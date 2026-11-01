@@ -2,7 +2,7 @@ module Make (Stack : Tcpip.Stack.V4V6) (Handler : App.S) = struct
   open Lwt.Syntax
   module Paf = Paf_mirage.Make (Stack.TCP)
 
-  let src = Logs.Src.create "httpcodes" ~doc:"httpcodes unikernel"
+  let src = Logs.Src.create "httpcamels" ~doc:"httpcamels unikernel"
 
   module Logger = (val Logs.src_log src : Logs.LOG)
 

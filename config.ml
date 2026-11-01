@@ -7,4 +7,4 @@ let main =
       [ package "h1"; package "paf" ~sublibs:[ "mirage" ]; package "tyxml" ]
 
 let stack = generic_stackv4v6 default_network
-let () = register "httpcodes" [ main $ stack ]
+let () = register "httpcamels" [ main $ stack ]

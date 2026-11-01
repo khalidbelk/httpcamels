@@ -1,4 +1,4 @@
-# httpcodes
+# httpcamels
 
 An HTTP codes API as an OCaml unikernel.
 
@@ -6,7 +6,7 @@ An HTTP codes API as an OCaml unikernel.
 mirage configure -t unix
 make depends
 dune build
-./dist/httpcodes
+./dist/httpcamels
 ```
 
 Use `-t hvt` instead of `-t unix` on Linux for Solo5 unikernels
