@@ -1,5 +1,11 @@
-type response = { status : H1.Status.t; body : string }
+type response = {
+  status : H1.Status.t;
+  headers : (string * string) list;
+  body : string;
+}
 
 module type S = sig
-  val handle : H1.Request.t -> response
+  type ctx (* app-specific state passed to [handle], opaque to the server *)
+
+  val handle : ctx -> H1.Request.t -> response Lwt.t
 end
