@@ -4,6 +4,7 @@ module Make (Assets : Mirage_kv.RO) = struct
   type ctx = Assets.t
 
   let src = Logs.Src.create "httpcamels.restapi"
+
   module Logger = (val Logs.src_log src : Logs.LOG)
 
   let getrand () = Random.int 1000
@@ -27,6 +28,15 @@ module Make (Assets : Mirage_kv.RO) = struct
             body = "An error ocurred while fetching the asset.";
           }
 
+  (** Returns [true] if the code is in the valid codes hashtable, or [false]
+      otherwise. *)
+  let is_valid_c code : bool = Option.is_some (Codes.find code)
+
+  let code_of_path path =
+    match String.split_on_char '/' path with
+    | [ ""; code ] -> int_of_string_opt code
+    | _ -> None
+
   let route assets method' path : App.response Lwt.t =
     match (method', path) with
     | `GET, "/" ->
@@ -38,10 +48,14 @@ module Make (Assets : Mirage_kv.RO) = struct
           }
     | `GET, "/khello" ->
         Lwt.return { App.status = `OK; headers = []; body = "Khello !" }
-    | `GET, "/404" -> async_serve_asset assets "404.jpg"
+    | `GET, p -> (
+        match code_of_path p with
+        | Some code when is_valid_c code ->
+            async_serve_asset assets (Int.to_string code ^ ".jpg")
+        | _ -> Lwt.return not_found_response)
     | _ -> Lwt.return not_found_response
 
-  let validate path : (string, App.response) result =
+  let validate_p ~path : (string, App.response) result =
     if String.length path > 256 then
       Error { status = `Uri_too_long; headers = []; body = "path too long" }
     else if path = "" || path.[0] <> '/' then
@@ -51,7 +65,7 @@ module Make (Assets : Mirage_kv.RO) = struct
   (** Takes the request descripton and return a response accordingly *)
   let handle assets (request : H1.Request.t) : App.response Lwt.t =
     let m = request.meth and p = request.target in
-    match validate p with
+    match validate_p ~path:p with
     | Error response -> Lwt.return response
     | Ok path -> route assets m path
 end
