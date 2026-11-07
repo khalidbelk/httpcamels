@@ -7,12 +7,7 @@ module Make (Assets : Mirage_kv.RO) = struct
 
   module Logger = (val Logs.src_log src : Logs.LOG)
 
-  (* TODO : make this typesafe + create str_of_mimetype func *)
-  let css_headers = [ ("content-type", "text/css") ]
-  let ttf_headers = [ ("content-type", "font/ttf") ]
-  let image_headers = [ ("content-type", "image/jpeg") ]
-  let png_headers = [ ("content-type", "image/png") ]
-  let svg_headers = [ ("content-type", "image/svg+xml") ]
+  let image_headers = [ Static.header_of_mime_type `Jpeg ]
 
   let not_found_response =
     { App.status = `Not_found; headers = []; body = "not found" }
@@ -49,21 +44,14 @@ module Make (Assets : Mirage_kv.RO) = struct
           { App.status = `OK; headers = []; body = Index.render_index () }
     | `GET, "/khello" ->
         Lwt.return { App.status = `OK; headers = []; body = "Khello !" }
-    | `GET, "/index.css" ->
-        async_serve_asset ~headers:css_headers assets "app/index.css"
-    | `GET, "/font" ->
-        async_serve_asset ~headers:ttf_headers assets
-          "app/SpaceGrotesk-Regular.ttf"
-    | `GET, "/dunes.svg" ->
-        async_serve_asset ~headers:svg_headers assets "app/dunes.svg"
-    | `GET, "/logo.png" ->
-        async_serve_asset ~headers:png_headers assets "app/logo.png"
-    | `GET, "/search.svg" ->
-        async_serve_asset ~headers:svg_headers assets "app/search.svg"
     | `GET, p -> (
-        match code_of_path p with
-        | Some code when is_valid_c code ->
-            async_serve_asset assets (Int.to_string code ^ ".jpg")
+        match (Static.find p, code_of_path p) with
+        | Some asset, _ ->
+            let filepath = "/app" ^ asset.route in
+            async_serve_asset ~headers:(Static.headers asset) assets filepath
+        | None, Some code when is_valid_c code ->
+            let filepath = Int.to_string code ^ ".jpg" in
+            async_serve_asset assets filepath
         | _ -> Lwt.return not_found_response)
     | _ -> Lwt.return not_found_response
 
