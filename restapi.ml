@@ -8,6 +8,7 @@ module Make (Assets : Mirage_kv.RO) = struct
   module Logger = (val Logs.src_log src : Logs.LOG)
 
   (* TODO : make this typesafe + create str_of_mimetype func *)
+  let css_headers = [ ("content-type", "text/css") ]
   let ttf_headers = [ ("content-type", "font/ttf") ]
   let image_headers = [ ("content-type", "image/jpeg") ]
   let png_headers = [ ("content-type", "image/png") ]
@@ -48,6 +49,8 @@ module Make (Assets : Mirage_kv.RO) = struct
           { App.status = `OK; headers = []; body = Index.render_index () }
     | `GET, "/khello" ->
         Lwt.return { App.status = `OK; headers = []; body = "Khello !" }
+    | `GET, "/index.css" ->
+        async_serve_asset ~headers:css_headers assets "app/index.css"
     | `GET, "/font" ->
         async_serve_asset ~headers:ttf_headers assets
           "app/SpaceGrotesk-Regular.ttf"
