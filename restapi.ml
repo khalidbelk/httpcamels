@@ -7,17 +7,21 @@ module Make (Assets : Mirage_kv.RO) = struct
 
   module Logger = (val Logs.src_log src : Logs.LOG)
 
-  let getrand () = Random.int 1000
+  (* TODO : make this typesafe + create str_of_mimetype func *)
+  let ttf_headers = [ ("content-type", "font/ttf") ]
   let image_headers = [ ("content-type", "image/jpeg") ]
+  let png_headers = [ ("content-type", "image/png") ]
+  let svg_headers = [ ("content-type", "image/svg+xml") ]
 
   let not_found_response =
     { App.status = `Not_found; headers = []; body = "not found" }
 
-  let async_serve_asset assets name : App.response Lwt.t =
+  let async_serve_asset ?(headers = image_headers) assets name :
+      App.response Lwt.t =
     let* result = Assets.get assets (Mirage_kv.Key.v name) in
     match result with
     | Ok "" -> Lwt.return not_found_response
-    | Ok body -> Lwt.return { App.status = `OK; headers = image_headers; body }
+    | Ok body -> Lwt.return { App.status = `OK; headers; body }
     | Error e ->
         Logger.warn (fun f ->
             f "Couldn't get asset %s: %a" name Assets.pp_error e);
@@ -41,13 +45,18 @@ module Make (Assets : Mirage_kv.RO) = struct
     match (method', path) with
     | `GET, "/" ->
         Lwt.return
-          {
-            App.status = `OK;
-            headers = [];
-            body = Index.render_index ~numbah:(getrand ());
-          }
+          { App.status = `OK; headers = []; body = Index.render_index () }
     | `GET, "/khello" ->
         Lwt.return { App.status = `OK; headers = []; body = "Khello !" }
+    | `GET, "/font" ->
+        async_serve_asset ~headers:ttf_headers assets
+          "app/SpaceGrotesk-Regular.ttf"
+    | `GET, "/dunes.svg" ->
+        async_serve_asset ~headers:svg_headers assets "app/dunes.svg"
+    | `GET, "/logo.png" ->
+        async_serve_asset ~headers:png_headers assets "app/logo.png"
+    | `GET, "/search.svg" ->
+        async_serve_asset ~headers:svg_headers assets "app/search.svg"
     | `GET, p -> (
         match code_of_path p with
         | Some code when is_valid_c code ->
