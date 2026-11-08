@@ -2,7 +2,7 @@
 
 To run this unikernel with Docker, as I'm doing for deployment, for convenience, here is a small tutorial on how you can achieve this :
 
-> Note: this is not the ultimate source or a general guide; but what I've been able to gather as knowledge from my unikernel deployments, including this one.
+> Note: this is not the ultimate source of truth or a general guide; but what I've been able to gather as knowledge from my unikernel deployments, including this one.
 
 ## Requirements
 

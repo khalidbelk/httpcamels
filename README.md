@@ -24,11 +24,13 @@ make                # Uses the Unix target by default
 ```
 
 > [!NOTE]
-> In Unix target, if there is no **tap** device (`tap0` specifically), or the unikernel can't open one, it won't start. You can use the host's sockets with ([checkout MirageOS docs](https://mirage.io/docs/hello-world)):
+> In Unix target, if there is no **tap** device (`tap0` specifically), or the unikernel can't open one, it won't start. You can use the host's sockets with :
 >
 > ```shell
 > make CONFIGURE_FLAGS="--net host"
 > ```
+>
+> ([checkout MirageOS docs](https://mirage.io/docs/hello-world))
 
 When targeting *Solo5* use:
 
@@ -36,7 +38,7 @@ When targeting *Solo5* use:
 make TARGET=hvt
 ```
 
-(*That's what I'm personally using for deployment, with the [aussi](https://github.com/robur-coop/aussi) runtime and Docker, specifically. See [DOCKER.md](./DOCKER.md) for a small guide on how to deploy it this way.*)
+(*That's what I'm personally using for deployment, with the [aussi](https://github.com/robur-coop/aussi) runtime and Docker. See [DOCKER.md](./DOCKER.md) for a small guide on how to deploy it this way.*)
 
 ## License
 
