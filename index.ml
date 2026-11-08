@@ -4,12 +4,9 @@ let paste_box =
   div
     ~a:[ a_class [ "paste" ] ]
     [
-      code ~a:[ a_id Ids.paste_url ] [ txt "https://host/<code>" ];
+      code ~a:[ a_id Site.paste_link ] [ txt Site.paste_link ];
       button
-        ~a:
-          [
-            a_id Ids.paste_copy; a_button_type `Button; a_title "Copy link";
-          ]
+        ~a:[ a_id Ids.paste_copy; a_button_type `Button; a_title "Copy link" ]
         [ img ~src:"/clipboard.svg" ~alt:"Copy" ~a:[ a_id Ids.paste_icon ] () ];
     ]
 
