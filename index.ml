@@ -1,6 +1,17 @@
 open Tyxml.Html
 
-(* TODO: paste link "https://host/<code>" div *)
+let paste_box =
+  div
+    ~a:[ a_class [ "paste" ] ]
+    [
+      code ~a:[ a_id Ids.paste_url ] [ txt "https://host/<code>" ];
+      button
+        ~a:
+          [
+            a_id Ids.paste_copy; a_button_type `Button; a_title "Copy link";
+          ]
+        [ img ~src:"/clipboard.svg" ~alt:"Copy" ~a:[ a_id Ids.paste_icon ] () ];
+    ]
 
 let pick n =
   Codes.all
@@ -23,6 +34,7 @@ let search_bar =
       input
         ~a:
           [
+            a_id Ids.search_input;
             a_input_type `Search;
             a_autocomplete `Off;
             a_name "q";
@@ -34,8 +46,7 @@ let search_bar =
         ();
     ]
 
-(* Filled in by search.js with the codes matching what is typed *)
-let search_results = ul ~a:[ a_id "results" ] []
+let search_results = ul ~a:[ a_id Ids.results ] []
 
 let unikernel_signature_html =
   footer
@@ -67,14 +78,15 @@ let doc () =
        [
          link ~rel:[ `Stylesheet ] ~href:"/index.css" ();
          link ~rel:[ `Icon ] ~href:"/logo.png" ();
-         script ~a:[ a_src "/search.js"; a_defer () ] (txt "");
+         script ~a:[ a_src "/client.js"; a_defer () ] (txt "");
        ])
     (body
        [
          h1 [ txt "HttpCamels"; img ~src:"/logo.png" ~alt:"" () ];
          search_bar;
+         paste_box;
          search_results;
-         div ~a:[ a_class [ "grid" ] ] (List.map camel (pick 8));
+         div ~a:[ a_class [ "grid" ]; a_id Ids.grid ] (List.map camel (pick 8));
          unikernel_signature_html;
        ])
 

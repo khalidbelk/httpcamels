@@ -1,10 +1,10 @@
 ; Script that runs in the browser, compiled to JS.
 
-; `make js` builds it and then it's copied to static/assets/app/search.js
+; `make js` builds it and then it's copied to static/assets/app/client.js
 ; so it can be embedded in the unikernel along the other assets.
 
 (executable
- (name search)
+ (name client)
  (modes js)
  (libraries camels yojson brr)
  (enabled_if

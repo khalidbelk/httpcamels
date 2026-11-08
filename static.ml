@@ -25,7 +25,9 @@ let all =
     v "/dunes.svg" `Svg;
     v "/logo.png" `Png;
     v "/search.svg" `Svg;
-    v "/search.js" `Js;
+    v "/clipboard.svg" `Svg;
+    v "/check.svg" `Svg;
+    v "/client.js" `Js;
   ]
 
 let find route = List.find_opt (fun a -> a.route = route) all

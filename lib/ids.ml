@@ -1,0 +1,6 @@
+let search_input = "search-input"
+let results = "results"
+let grid = "grid"
+let paste_url = "paste-url"
+let paste_copy = "paste-copy"
+let paste_icon = "paste-icon"

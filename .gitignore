@@ -20,8 +20,8 @@ tool
 # Pulled by `make depends` (opam monorepo)
 /duniverse
 
-# Compiled from client/search.ml by `make js`
-/static/assets/app/search.js
+# Compiled from client/client.ml by `make js`
+/static/assets/app/client.js
 
 # Built unikernels
 *.hvt

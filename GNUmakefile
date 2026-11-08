@@ -31,9 +31,9 @@ deps: configure
 	@$(MAKE) -f Makefile depends
 
 js: deps
-	@echo "${GREEN}Building the search script...${RESET}"
-	@dune build --root . _build/default/client/search.bc.js
-	@install -m 644 _build/default/client/search.bc.js static/assets/app/search.js
+	@echo "${GREEN}Building the client script...${RESET}"
+	@dune build --root . _build/default/client/client.bc.js
+	@install -m 644 _build/default/client/client.bc.js static/assets/app/client.js
 
 $(NAME): js
 	@echo "${GREEN}Building${RESET} $(NAME)..."
