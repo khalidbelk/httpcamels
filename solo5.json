@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "type": "solo5.config",
+  "mem": 128,
+  "nets": { "service": { "type": "docker", "iface": "eth0" } },
+  "argv": [
+    "--ipv4=%{solo5.net.service.ip}",
+    "--ipv4-gateway=%{solo5.net.service.gw}"
+  ]
+}
