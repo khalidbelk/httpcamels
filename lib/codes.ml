@@ -1,4 +1,5 @@
 type t = { code : int; name : string; description : string; official : bool }
+[@@deriving yojson]
 (** An HTTP status code.
 
     [official] is true for codes that are present in the IANA registry. The
@@ -150,3 +151,6 @@ let table : (int, t) Hashtbl.t =
   ht
 
 let find code = Hashtbl.find_opt table code
+
+(** All the codes as a JSON array, built once at startup. *)
+let json = Yojson.Safe.to_string (`List (List.map to_yojson all))

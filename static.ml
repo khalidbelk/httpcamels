@@ -1,4 +1,4 @@
-type mime_type = [ `Png | `Jpeg | `Svg | `Css | `Ttf ]
+type mime_type = [ `Png | `Jpeg | `Svg | `Css | `Ttf | `Js | `Json ]
 type header = string * string
 
 let header_of_mime_type (mime : mime_type) : header =
@@ -9,6 +9,8 @@ let header_of_mime_type (mime : mime_type) : header =
     | `Svg -> "image/svg+xml"
     | `Css -> "text/css"
     | `Ttf -> "font/ttf"
+    | `Js -> "text/javascript"
+    | `Json -> "application/json"
   in
   ("content-type", m)
 
@@ -23,6 +25,7 @@ let all =
     v "/dunes.svg" `Svg;
     v "/logo.png" `Png;
     v "/search.svg" `Svg;
+    v "/search.js" `Js;
   ]
 
 let find route = List.find_opt (fun a -> a.route = route) all

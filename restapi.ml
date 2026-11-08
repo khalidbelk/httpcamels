@@ -44,6 +44,13 @@ module Make (Assets : Mirage_kv.RO) = struct
           { App.status = `OK; headers = []; body = Index.render_index () }
     | `GET, "/khello" ->
         Lwt.return { App.status = `OK; headers = []; body = "Khello !" }
+    | `GET, "/codes.json" ->
+        Lwt.return
+          {
+            App.status = `OK;
+            headers = [ Static.header_of_mime_type `Json ];
+            body = Codes.json;
+          }
     | `GET, p -> (
         match (Static.find p, code_of_path p) with
         | Some asset, _ ->

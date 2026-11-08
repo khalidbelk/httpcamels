@@ -4,8 +4,14 @@ open Mirage
 let main =
   main "Unikernel.Make"
     (stackv4v6 @-> kv_ro @-> job)
+    ~local_libs:[ "camels" ]
     ~packages:
-      [ package "h1"; package "paf" ~sublibs:[ "mirage" ]; package "tyxml" ]
+      [
+        package "h1";
+        package "paf" ~sublibs:[ "mirage" ];
+        package "tyxml";
+        package "ppx_deriving_yojson" ~libs:[ "ppx_deriving_yojson.runtime" ];
+      ]
 
 let stack = generic_stackv4v6 default_network
 let assets = crunch "static/assets"

@@ -34,6 +34,9 @@ let search_bar =
         ();
     ]
 
+(* Filled in by search.js with the codes matching what is typed *)
+let search_results = ul ~a:[ a_id "results" ] []
+
 let unikernel_signature_html =
   footer
     ~a:[ a_class [ "signature" ] ]
@@ -64,11 +67,13 @@ let doc () =
        [
          link ~rel:[ `Stylesheet ] ~href:"/index.css" ();
          link ~rel:[ `Icon ] ~href:"/logo.png" ();
+         script ~a:[ a_src "/search.js"; a_defer () ] (txt "");
        ])
     (body
        [
          h1 [ txt "HttpCamels"; img ~src:"/logo.png" ~alt:"" () ];
          search_bar;
+         search_results;
          div ~a:[ a_class [ "grid" ] ] (List.map camel (pick 8));
          unikernel_signature_html;
        ])

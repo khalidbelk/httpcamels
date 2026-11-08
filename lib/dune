@@ -1,0 +1,10 @@
+; Code shared by the unikernel and the browser script, so both use the same
+; typed definition of a status code. Linked into the unikernel through
+; ~local_libs in config.ml.
+
+(library
+ (name camels)
+ (wrapped false)
+ (libraries yojson ppx_deriving_yojson.runtime)
+ (preprocess
+  (pps ppx_deriving_yojson)))
