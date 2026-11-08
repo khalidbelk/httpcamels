@@ -7,12 +7,20 @@ module Make (Assets : Mirage_kv.RO) = struct
 
   module Logger = (val Logs.src_log src : Logs.LOG)
 
-  let image_headers = [ Static.header_of_mime_type `Jpeg ]
+  let default_img_headers = Static.default_headers_of_mime_type ~mt:`Jpeg
 
   let not_found_response =
     { App.status = `Not_found; headers = []; body = "not found" }
 
-  let async_serve_asset ?(headers = image_headers) assets name :
+  let method_not_allowed =
+    let allowed_meth = "GET, HEAD" in
+    {
+      App.status = `Method_not_allowed;
+      headers = [ ("allow", allowed_meth) ];
+      body = "method not allowed";
+    }
+
+  let async_serve_asset ?(headers = default_img_headers) assets name :
       App.response Lwt.t =
     let* result = Assets.get assets (Mirage_kv.Key.v name) in
     match result with
@@ -48,19 +56,21 @@ module Make (Assets : Mirage_kv.RO) = struct
         Lwt.return
           {
             App.status = `OK;
-            headers = [ Static.header_of_mime_type `Json ];
+            headers = Static.default_headers_of_mime_type ~mt:`Json;
             body = Codes.json;
           }
     | `GET, p -> (
         match (Static.find p, code_of_path p) with
         | Some asset, _ ->
             let filepath = "/app" ^ asset.route in
-            async_serve_asset ~headers:(Static.headers asset) assets filepath
+            async_serve_asset
+              ~headers:(Static.headers_of_asset asset)
+              assets filepath
         | None, Some code when is_valid_c code ->
             let filepath = Int.to_string code ^ ".jpg" in
             async_serve_asset assets filepath
         | _ -> Lwt.return not_found_response)
-    | _ -> Lwt.return not_found_response
+    | _ -> Lwt.return method_not_allowed
 
   let validate_p ~path : (string, App.response) result =
     if String.length path > 256 then
@@ -71,7 +81,11 @@ module Make (Assets : Mirage_kv.RO) = struct
 
   (** Takes the request descripton and return a response accordingly *)
   let handle assets (request : H1.Request.t) : App.response Lwt.t =
-    let m = request.meth and p = request.target in
+    let m =
+      match request.meth with
+      | `HEAD -> `GET (* treating HEAD as GET like rfc 9110 *)
+      | m -> m
+    and p = request.target in
     match validate_p ~path:p with
     | Error response -> Lwt.return response
     | Ok path -> route assets m path

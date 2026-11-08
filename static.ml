@@ -1,6 +1,14 @@
 type mime_type = [ `Png | `Jpeg | `Svg | `Css | `Ttf | `Js | `Json ]
 type header = string * string
 
+let default_maxage_secs = 3600
+let max_age secs = Fmt.str "max-age=%d" secs
+
+let cache_control ~seconds =
+  ("cache-control", Fmt.str "public, %s" (max_age seconds))
+
+let default_cache_control = cache_control ~seconds:default_maxage_secs
+
 let header_of_mime_type (mime : mime_type) : header =
   let m =
     match mime with
@@ -31,4 +39,8 @@ let all =
   ]
 
 let find route = List.find_opt (fun a -> a.route = route) all
-let headers a = [ header_of_mime_type a.mime_type ]
+
+let default_headers_of_mime_type ~mt:t =
+  [ header_of_mime_type t; default_cache_control ]
+
+let headers_of_asset a = default_headers_of_mime_type ~mt:a.mime_type

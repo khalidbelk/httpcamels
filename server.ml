@@ -24,6 +24,7 @@ module Make (Stack : Tcpip.Stack.V4V6) (Handler : App.S) = struct
   let respond_to ctx (ip, port) reqd =
     let request = H1.Reqd.request reqd in
     let* { App.status; headers; body } = Handler.handle ctx request in
+    let payload = if request.meth = `HEAD then "" else body in
     let target = request.target in
     let body_len = String.length body in
     let content_length = ("content-length", string_of_int body_len) in
@@ -33,7 +34,9 @@ module Make (Stack : Tcpip.Stack.V4V6) (Handler : App.S) = struct
           Stack.IP.pp_ipaddr ip port
           (H1.Method.to_string request.meth)
           target (H1.Status.to_code status) body_len);
-    H1.Reqd.respond_with_string reqd (H1.Response.create ~headers status) body;
+    H1.Reqd.respond_with_string reqd
+      (H1.Response.create ~headers status)
+      payload;
     Lwt.return_unit
 
   (** Starts [respond_to] with [Lwt.async] and returns immediately, to match
