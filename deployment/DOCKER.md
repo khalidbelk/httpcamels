@@ -1,6 +1,6 @@
 # Docker
 
-To run this unikernel with Docker, as I'm doing for deployment, for convenience, here is a small tutorial on how you can achieve this :
+To run this unikernel with Docker, as I'm doing for deployment (for my convenience), here is a small tutorial :
 
 > Note: this is not the ultimate source of truth or a general guide; but what I've been able to gather as knowledge from my unikernel deployments, including this one.
 
@@ -14,7 +14,7 @@ sudo apt install opam
 opam init
 ```
 
-Then install **aussi** via opam :
+Once you have those set up, install `aussi` via opam :
 
 ```shell
 opam pin add aussi git+https://github.com/robur-coop/aussi.git
@@ -36,7 +36,9 @@ EOF
 ```
 and apply changes with `sudo systemctl restart docker`
 
-3. Make sure there's a [solo5.json](./solo5.json) manifest file next to the Dockerfile (if you clone, it will pick up the one from this repo).
+> [!NOTE]
+> Since the [solo5.json](../solo5.json) manifest file will be fetched from
+> the repository by the Dockerfile build step, you don't need a local copy.
 
 And most importantly, in Linux, since we're targeting `hvt` we need access to `/dev/kvm` and `/dev/net/tun`.
 You can also verify your current user is in the `kvm` group with
@@ -46,6 +48,8 @@ getent group kvm
 ```
 
 ## Build the image
+
+From the directory containing the Dockerfile, run :
 
 ```shell
 docker build -t httpcamels .
