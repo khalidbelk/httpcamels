@@ -38,7 +38,7 @@ When targeting *Solo5* use:
 make TARGET=hvt
 ```
 
-(*That's what I'm personally using for deployment, with the [aussi](https://github.com/robur-coop/aussi) runtime and Docker. See [DOCKER.md](./DOCKER.md) for a small guide on how to deploy it this way.*)
+(*That's what I'm personally using for deployment, with the [aussi](https://github.com/robur-coop/aussi) runtime and Docker. See [DOCKER.md](./deployment/DOCKER.md) for a small guide on how to deploy it this way.*)
 
 ## License
 
