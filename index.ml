@@ -88,7 +88,7 @@ let doc () =
        (title (txt "HttpCamels"))
        [
          link ~rel:[ `Stylesheet ] ~href:"/index.css" ();
-         link ~rel:[ `Icon ] ~href:"/logo.png" ();
+         link ~rel:[ `Icon ] ~href:"/logo.ico" ();
          script ~a:[ a_src "/client.js"; a_defer () ] (txt "");
        ])
     (body
