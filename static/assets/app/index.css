@@ -145,6 +145,45 @@ button img {
   object-fit: contain;
 }
 
+.navbar {
+  position: absolute;
+  top: 2rem;
+  right: 4rem;
+}
+
+.navbar img {
+  width: 2rem;
+  height: auto;
+}
+
+.navbar a {
+  position: relative;
+  display: block;
+}
+
+.navbar a::after {
+  content: attr(data-tooltip);
+  background: var(--camlorange);
+  font-family: SpaceGrotesk;
+  font-size: 0.8rem;
+  color: white;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.navbar a:hover::after,
+.navbar a:focus-visible::after {
+  opacity: 0.9;
+}
+
 .signature {
   font-style: italic;
   margin-top: auto;

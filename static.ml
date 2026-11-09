@@ -35,6 +35,7 @@ let all =
     v "/search.svg" `Svg;
     v "/clipboard.svg" `Svg;
     v "/check.svg" `Svg;
+    v "/octocat.svg" `Svg;
     v "/client.js" `Js;
   ]
 

@@ -24,6 +24,20 @@ let handle_input ~query =
 let handle_click ~code = Printf.sprintf "location.href='/%s'" code
 let code_pattern = "[1-5][0-9]{2}"
 
+let navbar =
+  div
+    ~a:[ a_class [ "navbar" ] ]
+    [
+      a
+        ~a:
+          [
+            a_href (uri_of_string "https://github.com/khalidbelk/httpcamels");
+            a_target "_blank";
+            a_user_data "tooltip" "Star me on GitHub !";
+          ]
+        [ img ~src:"/octocat.svg" ~alt:"Github repository" () ];
+    ]
+
 let search_bar =
   form
     ~a:[ a_onsubmit (handle_input ~query:"this.q.value") ]
@@ -79,6 +93,7 @@ let doc () =
        ])
     (body
        [
+         navbar;
          h1 [ txt "HttpCamels"; img ~src:"/logo.png" ~alt:"" () ];
          search_bar;
          paste_box;
