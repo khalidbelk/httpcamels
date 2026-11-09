@@ -12,7 +12,9 @@ RUN opam install -y brr js_of_ocaml-compiler
 RUN opam install -y mirage.4.11.2 opam-monorepo.0.4.3
 RUN opam install -y solo5.0.12.1 ocaml-solo5
 
+ARG CACHEBUST=0
 RUN git clone https://github.com/khalidbelk/httpcamels httpcamels
+
 WORKDIR /home/opam/httpcamels
 RUN opam exec -- make TARGET=hvt
 
